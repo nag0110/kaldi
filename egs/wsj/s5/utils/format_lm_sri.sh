@@ -61,9 +61,24 @@ done
 
 loc=`which change-lm-vocab`
 if [ -z $loc ]; then
-  echo You appear to not have SRILM tools installed.
-  echo cd to $KALDI_ROOT/tools and run extras/install_srilm.sh.
-  exit 1
+    sdir=$KALDI_ROOT/tools/srilm/bin
+
+    if [ -f $sdir/change-lm-vocab ]; then
+	echo Using SRILM tools from $sdir
+	export PATH=$PATH:$sdir
+
+	if uname -a | grep 64 >/dev/null; then # some kind of 64 bit...
+	    sdir=$sdir/i686-m64
+	else
+	    sdir=$sdir/i686
+	fi
+
+	export PATH=$PATH:$sdir
+    else
+	echo You appear to not have SRILM tools installed.
+	echo cd to $KALDI_ROOT/tools and run extras/install_srilm.sh.
+	exit 1
+    fi
 fi
 
 echo "Converting '$lm' to FST"
